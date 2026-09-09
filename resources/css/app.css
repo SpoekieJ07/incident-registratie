@@ -101,6 +101,13 @@ a {
     color: #fff;
 }
 
+.nav a.is-active {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: rgba(244, 63, 94, 0.8);
+    text-underline-offset: 8px;
+}
+
 .actions {
     display: flex;
     align-items: center;

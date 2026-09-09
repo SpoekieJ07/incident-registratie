@@ -17,7 +17,7 @@ Route::post('/logout', function (Request $request) {
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
 Route::middleware('auth')->group(function () {
     Route::get('/incidents', function () {

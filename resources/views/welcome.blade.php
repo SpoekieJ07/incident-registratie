@@ -21,9 +21,11 @@
             </div>
 
             <nav class="nav">
-                <a href="#features">Functies</a>
-                <a href="#workflow">Werkwijze</a>
-                <a href="#stats">Statistieken</a>
+                <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'is-active' : '' }}">Welkom</a>
+                <a href="{{ route('incidents.index') }}" class="{{ request()->routeIs('incidents.index') ? 'is-active' : '' }}">Mijn meldingen</a>
+                @auth
+                <a href="{{ route('incidents.create') }}">Melding maken</a>
+                @endauth
             </nav>
 
             <div class="actions">
