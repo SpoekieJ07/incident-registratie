@@ -27,12 +27,27 @@
             </nav>
 
             <div class="actions">
+                @auth
+                <a class="btn btn-outline" href="{{ route('incidents.index') }}">Mijn meldingen</a>
+                <a class="btn btn-outline" href="{{ route('incidents.create') }}">Melding maken</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-primary">Uitloggen</button>
+                </form>
+                @else
                 <a class="btn btn-outline" href="{{ route('register') }}">Registreren</a>
-                <a class="btn btn-primary" href="{{ route('register') }}">Melding doen</a>
+                <a class="btn btn-primary" href="{{ route('login') }}">Inloggen</a>
+                @endauth
             </div>
         </header>
 
         <main>
+            @if (session('status'))
+            <div class="auth-alert auth-alert-success" style="margin-top: 20px;">
+                {{ session('status') }}
+            </div>
+            @endif
+
             <section class="hero">
                 <div>
                     <span class="eyebrow">Veilig • Sneller • Overzichtelijk</span>
@@ -43,7 +58,11 @@
                     </p>
 
                     <div class="cta-row">
+                        @auth
+                        <a class="btn btn-primary" href="{{ route('incidents.create') }}">Nieuwe melding</a>
+                        @else
                         <a class="btn btn-primary" href="{{ route('register') }}">Nieuwe melding</a>
+                        @endauth
                         <a class="btn btn-outline" href="#workflow">Bekijk werkwijze</a>
                     </div>
 

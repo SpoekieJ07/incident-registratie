@@ -459,7 +459,8 @@ h1 {
     align-items: center;
     justify-content: center;
     padding: 32px 20px;
-    background: radial-gradient(circle at top, rgba(244, 63, 94, 0.12), transparent 28%), #020817;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #020817 0%, #111827 45%, #0f172a 100%);
 }
 
 .auth-shell {
@@ -467,10 +468,11 @@ h1 {
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
     background: rgba(15, 23, 42, 0.82);
-    border: 1px solid var(--line);
+    border: 1px solid rgba(148, 163, 184, 0.25);
     border-radius: 30px;
     overflow: hidden;
     box-shadow: 0 28px 70px rgba(2, 6, 23, 0.55);
+    backdrop-filter: blur(12px);
 }
 
 .auth-panel {
@@ -478,11 +480,24 @@ h1 {
 }
 
 .auth-panel-visual {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     background: linear-gradient(135deg, rgba(244, 63, 94, 0.12), rgba(15, 23, 42, 0.9));
     border-right: 1px solid var(--line);
+    overflow: hidden;
+}
+
+.auth-panel-visual::after {
+    content: "";
+    position: absolute;
+    inset: auto -80px -80px auto;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(244, 63, 94, 0.12);
+    filter: blur(8px);
 }
 
 .auth-panel-visual .brand-mark {
@@ -530,6 +545,7 @@ h1 {
 
 .auth-panel-form {
     background: rgba(2, 6, 23, 0.75);
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.08);
 }
 
 .auth-heading {
@@ -614,6 +630,14 @@ h1 {
     margin-top: 8px;
     border: 0;
     cursor: pointer;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    box-shadow: 0 16px 30px rgba(239, 68, 68, 0.28);
+}
+
+.auth-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 32px rgba(239, 68, 68, 0.36);
 }
 
 .auth-alert {
@@ -641,6 +665,169 @@ h1 {
     text-align: center;
     color: var(--muted);
     font-size: 0.95rem;
+}
+
+.incident-page {
+    min-height: 100vh;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #020817 0%, #111827 45%, #0f172a 100%);
+}
+
+.incident-shell {
+    width: min(760px, 100%);
+    margin: 0 auto;
+    background: rgba(15, 23, 42, 0.82);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 30px;
+    padding: 32px;
+    box-shadow: 0 28px 70px rgba(2, 6, 23, 0.55);
+}
+
+.incident-header {
+    margin-bottom: 28px;
+}
+
+.incident-header h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: -0.05em;
+}
+
+.incident-header p {
+    margin: 12px 0 0;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.incident-form {
+    display: grid;
+    gap: 18px;
+}
+
+.incident-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.form-field {
+    display: grid;
+    gap: 8px;
+}
+
+.form-field label {
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    background: rgba(15, 23, 42, 0.8);
+    color: white;
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: inherit;
+}
+
+.form-field textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus {
+    outline: none;
+    border-color: rgba(251, 113, 133, 0.8);
+    box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.12);
+}
+
+.incident-actions {
+    margin-top: 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.incident-list-panel {
+    display: grid;
+    gap: 18px;
+}
+
+.incident-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 20px;
+    padding: 22px 20px;
+}
+
+.incident-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.incident-card-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.incident-card-header p {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.incident-description {
+    margin: 16px 0 0;
+    color: #dbeafe;
+    line-height: 1.7;
+}
+
+.incident-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.status-open {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #fcd34d;
+}
+
+.status-in-behandeling {
+    background: rgba(59, 130, 246, 0.12);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+}
+
+.status-afgerond,
+.status-opgelost {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #bbf7d0;
 }
 
 @media (max-width: 900px) {
@@ -684,5 +871,25 @@ h1 {
     .form-row {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .incident-shell {
+        padding: 24px 18px;
+    }
+
+    .incident-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .incident-actions {
+        flex-direction: column-reverse;
+    }
+
+    .incident-actions .btn {
+        width: 100%;
+    }
+
+    .incident-card-header {
+        flex-direction: column;
     }
 }

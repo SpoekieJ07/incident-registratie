@@ -21,34 +21,53 @@
         </div>
         @endif
 
-        <form method="POST" action="{{ route('register.post') }}" class="space-y-5">
+        @if ($errors->any())
+        <div class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <ul class="list-disc space-y-1 pl-5">
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
+        <form method="POST" action="{{ route('register.post') }}" class="space-y-5" novalidate>
             @csrf
 
             <div>
                 <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Naam</label>
-                <input id="name" name="name" type="text" required
-                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                <input id="name" name="name" type="text" value="{{ old('name') }}" required
+                    class="w-full rounded-lg border {{ $errors->has('name') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
                     placeholder="Jan Jansen">
+                @error('name')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
                 <label for="email" class="block text-sm font-medium text-slate-700 mb-1">E-mail</label>
-                <input id="email" name="email" type="email" required
-                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                <input id="email" name="email" type="email" value="{{ old('email') }}" required
+                    class="w-full rounded-lg border {{ $errors->has('email') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
                     placeholder="naam@email.com">
+                @error('email')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
                 <label for="password" class="block text-sm font-medium text-slate-700 mb-1">Wachtwoord</label>
                 <input id="password" name="password" type="password" required
-                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    class="w-full rounded-lg border {{ $errors->has('password') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
                     placeholder="••••••••">
+                @error('password')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
                 <label for="password_confirmation" class="block text-sm font-medium text-slate-700 mb-1">Bevestig wachtwoord</label>
                 <input id="password_confirmation" name="password_confirmation" type="password" required
-                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    class="w-full rounded-lg border {{ $errors->has('password') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
                     placeholder="••••••••">
             </div>
 
@@ -60,7 +79,7 @@
 
         <p class="mt-6 text-center text-sm text-slate-500">
             Heb je al een account?
-            <a href="{{ url('/') }}" class="font-medium text-blue-600 hover:text-blue-500">Inloggen</a>
+            <a href="{{ url('/login') }}" class="font-medium text-blue-600 hover:text-blue-500">Inloggen</a>
         </p>
     </div>
 </body>
