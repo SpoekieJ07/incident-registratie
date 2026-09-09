@@ -9,6 +9,10 @@
 </head>
 
 <body class="incident-page">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 24px 24px 72px;">
+        <x-layout />
+    </div>
+
     <div class="incident-shell">
         <div class="incident-header">
             <span class="eyebrow">Incident melden</span>

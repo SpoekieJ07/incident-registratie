@@ -9,6 +9,8 @@
 </head>
 
 <body class="auth-page">
+    <x-layout />
+
     <div class="auth-shell">
         <div class="auth-panel auth-panel-visual">
             <div class="brand-mark">!</div>

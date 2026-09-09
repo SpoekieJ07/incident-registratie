@@ -11,37 +11,7 @@
 
 <body>
     <div class="container">
-        <header class="topbar">
-            <div class="brand">
-                <div class="brand-mark">!</div>
-                <div class="brand-copy">
-                    <small>Incident</small>
-                    <strong>Meldsysteem</strong>
-                </div>
-            </div>
-
-            <nav class="nav">
-                <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'is-active' : '' }}">Welkom</a>
-                <a href="{{ route('incidents.index') }}" class="{{ request()->routeIs('incidents.index') ? 'is-active' : '' }}">Mijn meldingen</a>
-                @auth
-                <a href="{{ route('incidents.create') }}">Melding maken</a>
-                @endauth
-            </nav>
-
-            <div class="actions">
-                @auth
-                <a class="btn btn-outline" href="{{ route('incidents.index') }}">Mijn meldingen</a>
-                <a class="btn btn-outline" href="{{ route('incidents.create') }}">Melding maken</a>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-primary">Uitloggen</button>
-                </form>
-                @else
-                <a class="btn btn-outline" href="{{ route('register') }}">Registreren</a>
-                <a class="btn btn-primary" href="{{ route('login') }}">Inloggen</a>
-                @endauth
-            </div>
-        </header>
+        <x-layout />
 
         <main>
             @if (session('status'))

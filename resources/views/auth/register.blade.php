@@ -9,6 +9,8 @@
 </head>
 
 <body class="bg-slate-100 min-h-screen flex items-center justify-center p-6">
+    <x-layout />
+
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         <div class="mb-6 text-center">
             <h1 class="text-2xl font-bold text-slate-800">Maak een account</h1>

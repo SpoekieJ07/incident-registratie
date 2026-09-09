@@ -10,28 +10,7 @@
 
 <body class="incident-page">
     <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 24px 24px 72px;">
-        <header class="topbar" style="margin-bottom: 24px;">
-            <div class="brand">
-                <div class="brand-mark">!</div>
-                <div class="brand-copy">
-                    <small>Incident</small>
-                    <strong>Meldsysteem</strong>
-                </div>
-            </div>
-
-            <nav class="nav">
-                <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'is-active' : '' }}">Welkom</a>
-                <a href="{{ route('incidents.index') }}" class="{{ request()->routeIs('incidents.index') ? 'is-active' : '' }}">Mijn meldingen</a>
-                <a href="{{ route('incidents.create') }}">Melding maken</a>
-            </nav>
-
-            <div class="actions">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-primary">Uitloggen</button>
-                </form>
-            </div>
-        </header>
+        <x-layout />
     </div>
 
     <div class="incident-shell">
