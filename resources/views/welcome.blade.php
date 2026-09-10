@@ -11,7 +11,7 @@
 
 <body>
     <div class="container">
-        <x-layout />
+        <x-layout >
 
         <main>
             @if (session('status'))
