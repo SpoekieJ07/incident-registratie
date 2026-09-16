@@ -10,6 +10,8 @@ class IncidentType extends Model
 
     protected function casts(): array
     {
-        return ['active' => 'boolean'];
+        return [
+            'active' => 'boolean',
+        ];
     }
 }
