@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Incident;
 use App\Models\IncidentType;
 use App\Models\Location;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -12,9 +15,31 @@ class IncidentController extends Controller
 {
     public function index(Request $request): View
     {
-        $incidents = $request->user()->incidents()->latest()->get();
+        $filters = $request->validate([
+            'type' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', 'string', 'max:255'],
+            'location' => ['nullable', 'string', 'max:255'],
+            'date_from' => ['nullable', 'date'],
+            'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
+        ]);
 
-        return view('incidents.index', ['incidents' => $incidents]);
+        $query = Incident::with(['user', 'assignedTo'])
+            ->when($filters['type'] ?? null, fn (Builder $query, string $type) => $query->where('type', $type))
+            ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status))
+            ->when($filters['location'] ?? null, fn (Builder $query, string $location) => $query->where('location', $location))
+            ->when($filters['date_from'] ?? null, fn (Builder $query, string $date) => $query->whereDate('occurred_at', '>=', $date))
+            ->when($filters['date_to'] ?? null, fn (Builder $query, string $date) => $query->whereDate('occurred_at', '<=', $date));
+
+        $incidents = $query->latest('occurred_at')->get();
+
+        return view('incidents.index', [
+            'incidents' => $incidents,
+            'incidentTypes' => IncidentType::orderBy('name')->get(),
+            'locations' => Location::orderBy('name')->get(),
+            'statuses' => Incident::query()->select('status')->distinct()->orderBy('status')->pluck('status'),
+            'responsibles' => User::orderBy('name')->get(),
+            'filters' => $filters,
+        ]);
     }
 
     public function create(): View

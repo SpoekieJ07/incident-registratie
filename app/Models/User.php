@@ -24,6 +24,11 @@ class User extends Authenticatable
         return $this->hasMany(Incident::class);
     }
 
+    public function assignedIncidents(): HasMany
+    {
+        return $this->hasMany(Incident::class, 'assigned_to_user_id');
+    }
+
     public function hasRole(UserRole $role): bool
     {
         return $this->role === $role;

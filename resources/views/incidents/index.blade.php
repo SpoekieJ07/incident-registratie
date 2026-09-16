@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mijn meldingen | {{ config('app.name', 'IncidentDesk') }}</title>
+    <title>Incidenten | {{ config('app.name', 'IncidentDesk') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -15,14 +15,58 @@
 
     <div class="incident-shell">
         <div class="incident-header">
-            <span class="eyebrow">Mijn meldingen</span>
-            <h1>Overzicht van jouw incidenten</h1>
-            <p>Hier kun je je eigen meldingen en de huidige status bekijken.</p>
+            <span class="eyebrow">Incidentoverzicht</span>
+            <h1>Alle incidenten</h1>
+            <p>Hier vind je alle gemelde incidenten en hun huidige status.</p>
         </div>
+
+        <form method="GET" action="{{ route('incidents.index') }}" class="incident-form">
+            <div class="incident-grid">
+                <div>
+                    <label for="type">Type</label>
+                    <select id="type" name="type">
+                        <option value="">Alle types</option>
+                        @foreach ($incidentTypes as $incidentType)
+                        <option value="{{ $incidentType->name }}" @selected(($filters['type'] ?? '' )===$incidentType->name)>{{ $incidentType->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="">Alle statussen</option>
+                        @foreach ($statuses as $status)
+                        <option value="{{ $status }}" @selected(($filters['status'] ?? '' )===$status)>{{ $status }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="location">Locatie</label>
+                    <select id="location" name="location">
+                        <option value="">Alle locaties</option>
+                        @foreach ($locations as $location)
+                        <option value="{{ $location->name }}" @selected(($filters['location'] ?? '' )===$location->name)>{{ $location->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="date_from">Vanaf datum</label>
+                    <input id="date_from" name="date_from" type="date" value="{{ $filters['date_from'] ?? '' }}">
+                </div>
+                <div>
+                    <label for="date_to">Tot en met datum</label>
+                    <input id="date_to" name="date_to" type="date" value="{{ $filters['date_to'] ?? '' }}">
+                </div>
+            </div>
+            <div class="incident-actions">
+                <button type="submit" class="btn btn-primary">Filteren</button>
+                <a href="{{ route('incidents.index') }}" class="btn btn-outline">Filters wissen</a>
+            </div>
+        </form>
 
         @if ($incidents->isEmpty())
         <div class="auth-alert auth-alert-success">
-            Je hebt nog geen meldingen gemaakt.
+            Er zijn nog geen incidenten gemeld.
         </div>
         @else
         <div class="incident-list-panel">
@@ -39,9 +83,26 @@
                 <p class="incident-description">{{ $incident->description }}</p>
 
                 <div class="incident-meta">
+                    <span><strong>Melder:</strong> {{ $incident->user->name }}</span>
                     <span><strong>Type:</strong> {{ $incident->type }}</span>
                     <span><strong>Status:</strong> {{ $incident->status }}</span>
+                    <span><strong>Verantwoordelijke:</strong> {{ $incident->assignedTo?->name ?? 'Nog niet toegewezen' }}</span>
                 </div>
+
+                @if ($incident->notes)
+                <p class="incident-description"><strong>Notities:</strong> {{ $incident->notes }}</p>
+                @endif
+
+                @if (auth()->user()->isCoordinator() || auth()->user()->isBeheerder())
+                <div class="incident-actions">
+                    <a class="btn btn-outline" href="{{ route('beheer.incidents.edit', $incident) }}">Bewerken</a>
+                    <form method="POST" action="{{ route('beheer.incidents.destroy', $incident) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline">Verwijderen</button>
+                    </form>
+                </div>
+                @endif
             </article>
             @endforeach
         </div>

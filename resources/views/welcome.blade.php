@@ -39,9 +39,9 @@
                     </div>
 
                     <div class="mini-stats">
-                        <div><strong>24/7</strong> Beschikbaar</div>
-                        <div><strong>3 min</strong> Gemiddelde melding</div>
-                        <div><strong>99.9%</strong> Signalering</div>
+                        <div><strong>{{ $incidentCount }}</strong> Totaal gemeld</div>
+                        <div><strong>{{ $openIncidentCount }}</strong> Openstaand</div>
+                        <div><strong>{{ $resolvedPercentage }}%</strong> Opgelost</div>
                     </div>
                 </div>
 
@@ -57,35 +57,25 @@
                     <div class="panel-box">
                         <div class="open-row">
                             <span>Open meldingen</span>
-                            <strong>18</strong>
+                            <strong>{{ $openIncidentCount }}</strong>
                         </div>
-                        <div class="meter"><span></span></div>
+                        <div class="meter"><span @style(['width'=> ($incidentCount === 0 ? 0 : 100 - $resolvedPercentage).'%;'])></span></div>
                     </div>
 
                     <div class="incident-list">
+                        @forelse ($recentIncidents as $incident)
                         <div class="incident-item">
                             <div>
-                                <strong>Netwerk uitval</strong>
-                                <p>Locatie: Kantoor Oost</p>
+                                <strong>{{ $incident->title }}</strong>
+                                <p>Locatie: {{ $incident->location }}</p>
                             </div>
-                            <span class="tag warning">In behandeling</span>
+                            <span class="tag info">{{ $incident->status }}</span>
                         </div>
-
+                        @empty
                         <div class="incident-item">
-                            <div>
-                                <strong>Lift storing</strong>
-                                <p>Locatie: Gebouw A</p>
-                            </div>
-                            <span class="tag info">Onderzocht</span>
+                            <strong>Nog geen incidenten gemeld</strong>
                         </div>
-
-                        <div class="incident-item">
-                            <div>
-                                <strong>Veiligheidsrisico</strong>
-                                <p>Locatie: Garage</p>
-                            </div>
-                            <span class="tag danger">Urgent</span>
-                        </div>
+                        @endforelse
                     </div>
                 </div>
             </section>
@@ -93,20 +83,20 @@
             <section id="stats" class="stats-grid">
                 <div class="stat-card">
                     <div class="label">Meldingen</div>
-                    <strong>1.248</strong>
-                    <span>in de laatste 30 dagen</span>
+                    <strong>{{ $incidentCount }}</strong>
+                    <span>in totaal geregistreerd</span>
                 </div>
 
                 <div class="stat-card">
-                    <div class="label">Gem. reactietijd</div>
-                    <strong>11m</strong>
-                    <span>van melding tot eerste actie</span>
+                    <div class="label">Openstaand</div>
+                    <strong>{{ $openIncidentCount }}</strong>
+                    <span>meldingen wachten op actie</span>
                 </div>
 
                 <div class="stat-card">
                     <div class="label">Opgelost</div>
-                    <strong>94%</strong>
-                    <span>van alle openstaande zaken</span>
+                    <strong>{{ $resolvedPercentage }}%</strong>
+                    <span>van alle geregistreerde meldingen</span>
                 </div>
             </section>
 

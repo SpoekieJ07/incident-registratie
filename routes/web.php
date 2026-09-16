@@ -3,12 +3,21 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BeheerController;
 use App\Http\Controllers\IncidentController;
+use App\Models\Incident;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/', function () {
-    return view('welcome');
+    $incidentCount = Incident::count();
+    $resolvedCount = Incident::where('status', 'Opgelost')->count();
+
+    return view('welcome', [
+        'incidentCount' => $incidentCount,
+        'openIncidentCount' => Incident::where('status', '!=', 'Opgelost')->count(),
+        'resolvedPercentage' => $incidentCount === 0 ? 0 : round(($resolvedCount / $incidentCount) * 100),
+        'recentIncidents' => Incident::latest('occurred_at')->take(3)->get(),
+    ]);
 })->name('home');
 
 Route::middleware('auth')->group(function () {
@@ -17,8 +26,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/incidents', [IncidentController::class, 'store'])->name('incidents.store');
 });
 
+Route::middleware(['auth', 'coordinator'])->prefix('beheer')->name('beheer.')->group(function () {
+    Route::get('/incidents/{incident}/edit', [BeheerController::class, 'editIncident'])->name('incidents.edit');
+    Route::patch('/incidents/{incident}', [BeheerController::class, 'updateIncident'])->name('incidents.update');
+});
+
 Route::middleware(['auth', 'beheerder'])->prefix('beheer')->name('beheer.')->group(function () {
     Route::get('/', [BeheerController::class, 'index'])->name('index');
+    Route::delete('/incidents/{incident}', [BeheerController::class, 'destroyIncident'])->name('incidents.destroy');
     Route::post('/incidenttypes', [BeheerController::class, 'storeIncidentType'])->name('incidenttypes.store');
     Route::patch('/incidenttypes/{incidentType}', [BeheerController::class, 'updateIncidentType'])->name('incidenttypes.update');
     Route::delete('/incidenttypes/{incidentType}', [BeheerController::class, 'destroyIncidentType'])->name('incidenttypes.destroy');

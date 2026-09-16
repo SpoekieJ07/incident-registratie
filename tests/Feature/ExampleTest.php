@@ -6,9 +6,30 @@ use App\Models\User;
 use App\UserRole;
 
 test('the application returns a successful response', function () {
+    $user = User::factory()->create();
+    $user->incidents()->createMany([
+        [
+            'title' => 'Eerste incident',
+            'description' => 'Beschrijving van het eerste incident.',
+            'location' => 'Kantoor',
+            'occurred_at' => '2026-09-16 09:00:00',
+            'type' => 'Technisch',
+            'status' => 'Open',
+        ],
+        [
+            'title' => 'Tweede incident',
+            'description' => 'Beschrijving van het tweede incident.',
+            'location' => 'Magazijn',
+            'occurred_at' => '2026-09-16 10:00:00',
+            'type' => 'Veiligheid',
+            'status' => 'Open',
+        ],
+    ]);
+
     $response = $this->get('/');
 
-    $response->assertStatus(200);
+    $response->assertStatus(200)
+        ->assertSee('<strong>2</strong>', false);
 });
 
 test('the login page is available', function () {
@@ -65,7 +86,7 @@ test('an authenticated user can create an incident', function () {
     ]);
 });
 
-test('an authenticated user can view their own incidents and statuses', function () {
+test('an authenticated user can view all incidents and statuses', function () {
     $user = User::factory()->create();
     $otherUser = User::factory()->create();
 
@@ -90,10 +111,113 @@ test('an authenticated user can view their own incidents and statuses', function
     $response = $this->actingAs($user)->get('/incidents');
 
     $response->assertOk()
-        ->assertSee('Mijn meldingen')
+        ->assertSee('Alle incidenten')
         ->assertSee('Netwerk uitval')
         ->assertSee('In behandeling')
+        ->assertSee('Ander incident')
+        ->assertSee($otherUser->name);
+});
+
+test('only a beheerder can update or delete incidents', function () {
+    $beheerder = User::factory()->beheerder()->create();
+    $melder = User::factory()->create();
+    $incident = $melder->incidents()->create([
+        'title' => 'Printer defect',
+        'description' => 'De printer werkt niet.',
+        'location' => 'Receptie',
+        'occurred_at' => '2026-09-09 14:30:00',
+        'type' => 'Hardware',
+        'status' => 'Open',
+    ]);
+
+    $this->actingAs($melder)
+        ->patch(route('beheer.incidents.update', $incident), [
+            'title' => 'Aangepast door melder',
+            'description' => 'Aangepaste omschrijving.',
+            'location' => 'Receptie',
+            'occurred_at' => '2026-09-09 14:30:00',
+            'type' => 'Hardware',
+            'status' => 'Opgelost',
+        ])
+        ->assertForbidden();
+
+    $this->actingAs($beheerder)
+        ->patch(route('beheer.incidents.update', $incident), [
+            'title' => 'Aangepast door beheerder',
+            'description' => 'Aangepaste omschrijving.',
+            'location' => 'Receptie',
+            'occurred_at' => '2026-09-09 14:30:00',
+            'type' => 'Hardware',
+            'status' => 'Opgelost',
+        ])
+        ->assertRedirect(route('incidents.index'));
+
+    $this->assertDatabaseHas('incidents', [
+        'id' => $incident->id,
+        'title' => 'Aangepast door beheerder',
+        'status' => 'Opgelost',
+    ]);
+
+    $this->actingAs($melder)
+        ->delete(route('beheer.incidents.destroy', $incident))
+        ->assertForbidden();
+
+    $this->actingAs($beheerder)
+        ->delete(route('beheer.incidents.destroy', $incident))
+        ->assertRedirect(route('incidents.index'));
+
+    $this->assertDatabaseMissing('incidents', ['id' => $incident->id]);
+});
+
+test('a coordinator can filter, assign and update incident handling', function () {
+    $coordinator = User::factory()->coordinator()->create();
+    $responsible = User::factory()->create(['name' => 'Verantwoordelijke Gebruiker']);
+    $otherIncident = $responsible->incidents()->create([
+        'title' => 'Ander incident',
+        'description' => 'Ander incident.',
+        'location' => 'Magazijn',
+        'occurred_at' => '2026-09-10 10:00:00',
+        'type' => 'Veiligheid',
+        'status' => 'Open',
+    ]);
+    $incident = $responsible->incidents()->create([
+        'title' => 'Netwerkprobleem',
+        'description' => 'Het netwerk valt uit.',
+        'location' => 'Kantoor',
+        'occurred_at' => '2026-09-11 10:00:00',
+        'type' => 'Infrastructuur',
+        'status' => 'Open',
+    ]);
+
+    $this->actingAs($coordinator)
+        ->get('/incidents?type=Infrastructuur&date_from=2026-09-11&status=Open&location=Kantoor')
+        ->assertOk()
+        ->assertSee('Netwerkprobleem')
         ->assertDontSee('Ander incident');
+
+    $this->actingAs($coordinator)
+        ->patch(route('beheer.incidents.update', $incident), [
+            'title' => $incident->title,
+            'description' => $incident->description,
+            'location' => $incident->location,
+            'occurred_at' => '2026-09-11 10:00:00',
+            'type' => $incident->type,
+            'status' => 'In behandeling',
+            'assigned_to_user_id' => $responsible->id,
+            'notes' => 'Coördinator heeft contact opgenomen.',
+        ])
+        ->assertRedirect(route('incidents.index'));
+
+    $this->assertDatabaseHas('incidents', [
+        'id' => $incident->id,
+        'status' => 'In behandeling',
+        'assigned_to_user_id' => $responsible->id,
+        'notes' => 'Coördinator heeft contact opgenomen.',
+    ]);
+
+    $this->actingAs($responsible)
+        ->patch(route('beheer.incidents.update', $otherIncident), [])
+        ->assertForbidden();
 });
 
 test('only a beheerder can manage catalogs and user roles', function () {

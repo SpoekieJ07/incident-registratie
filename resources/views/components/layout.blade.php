@@ -9,7 +9,7 @@
 
     <nav class="nav">
         <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'is-active' : '' }}">Welkom</a>
-        <a href="{{ route('incidents.index') }}" class="{{ request()->routeIs('incidents.index') ? 'is-active' : '' }}">Mijn meldingen</a>
+        <a href="{{ route('incidents.index') }}" class="{{ request()->routeIs('incidents.index') ? 'is-active' : '' }}">Alle meldingen</a>
         @auth
         <a href="{{ route('incidents.create') }}" class="{{ request()->routeIs('incidents.create') ? 'is-active' : '' }}">Melding maken</a>
         @if (auth()->user()->isBeheerder())

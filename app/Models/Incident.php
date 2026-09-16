@@ -12,12 +12,14 @@ class Incident extends Model
 
     protected $fillable = [
         'user_id',
+        'assigned_to_user_id',
         'title',
         'description',
         'location',
         'occurred_at',
         'type',
         'status',
+        'notes',
     ];
 
     protected function casts(): array
@@ -30,5 +32,10 @@ class Incident extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function assignedTo(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to_user_id');
     }
 }
