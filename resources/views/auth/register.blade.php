@@ -8,13 +8,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-6">
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-6 text-black">
     <x-layout />
 
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         <div class="mb-6 text-center">
-            <h1 class="text-2xl font-bold text-slate-800">Maak een account</h1>
-            <p class="mt-2 text-sm text-slate-500">Vul hieronder je gegevens in</p>
+            <h1 class="text-2xl font-bold text-black">Maak een account</h1>
+            <p class="mt-2 text-sm text-black">Vul hieronder je gegevens in</p>
         </div>
 
         @if (session('status'))
@@ -37,9 +37,9 @@
             @csrf
 
             <div>
-                <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Naam</label>
+                <label for="name" class="block text-sm font-medium text-black mb-1">Naam</label>
                 <input id="name" name="name" type="text" value="{{ old('name') }}" required
-                    class="w-full rounded-lg border {{ $errors->has('name') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
+                    class="w-full rounded-lg border text-black {{ $errors->has('name') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
                     placeholder="Jan Jansen">
                 @error('name')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -47,9 +47,9 @@
             </div>
 
             <div>
-                <label for="email" class="block text-sm font-medium text-slate-700 mb-1">E-mail</label>
+                <label for="email" class="block text-sm font-medium text-black mb-1">E-mail</label>
                 <input id="email" name="email" type="email" value="{{ old('email') }}" required
-                    class="w-full rounded-lg border {{ $errors->has('email') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
+                    class="w-full rounded-lg border text-black {{ $errors->has('email') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
                     placeholder="naam@email.com">
                 @error('email')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -57,9 +57,9 @@
             </div>
 
             <div>
-                <label for="password" class="block text-sm font-medium text-slate-700 mb-1">Wachtwoord</label>
+                <label for="password" class="block text-sm font-medium text-black mb-1">Wachtwoord</label>
                 <input id="password" name="password" type="password" required
-                    class="w-full rounded-lg border {{ $errors->has('password') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
+                    class="w-full rounded-lg border text-black {{ $errors->has('password') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
                     placeholder="••••••••">
                 @error('password')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -67,9 +67,9 @@
             </div>
 
             <div>
-                <label for="password_confirmation" class="block text-sm font-medium text-slate-700 mb-1">Bevestig wachtwoord</label>
+                <label for="password_confirmation" class="block text-sm font-medium text-black mb-1">Bevestig wachtwoord</label>
                 <input id="password_confirmation" name="password_confirmation" type="password" required
-                    class="w-full rounded-lg border {{ $errors->has('password') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
+                    class="w-full rounded-lg border text-black {{ $errors->has('password') ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100' }} px-3 py-2.5 focus:outline-none focus:ring-2"
                     placeholder="••••••••">
             </div>
 
@@ -79,7 +79,7 @@
             </button>
         </form>
 
-        <p class="mt-6 text-center text-sm text-slate-500">
+        <p class="mt-6 text-center text-sm text-black">
             Heb je al een account?
             <a href="{{ url('/login') }}" class="font-medium text-blue-600 hover:text-blue-500">Inloggen</a>
         </p>

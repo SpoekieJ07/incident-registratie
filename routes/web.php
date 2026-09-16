@@ -151,4 +151,4 @@ Route::post('/register', function (Request $request) {
     Auth::login($user);
 
     return redirect()->route('login')->with('status', 'Registratie gelukt! Je kunt nu inloggen.');
-});
+})->name('register.post');
