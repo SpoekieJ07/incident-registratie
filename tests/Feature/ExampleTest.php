@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\UserRole;
 
 test('the application returns a successful response', function () {
     $response = $this->get('/');
@@ -28,8 +29,16 @@ test('a user can register and be saved to the database', function () {
     $this->assertDatabaseHas('users', [
         'email' => 'test@example.com',
         'name' => 'Test Gebruiker',
+        'role' => UserRole::Melder->value,
     ]);
     $this->assertTrue(User::where('email', 'test@example.com')->exists());
+});
+
+test('users can have each supported role', function () {
+    expect(User::factory()->user()->make()->role)->toBe(UserRole::User)
+        ->and(User::factory()->make()->role)->toBe(UserRole::Melder)
+        ->and(User::factory()->coordinator()->make()->role)->toBe(UserRole::Coordinator)
+        ->and(User::factory()->beheerder()->make()->role)->toBe(UserRole::Beheerder);
 });
 
 test('an authenticated user can create an incident', function () {
