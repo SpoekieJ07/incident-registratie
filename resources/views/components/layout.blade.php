@@ -12,6 +12,9 @@
         <a href="{{ route('incidents.index') }}" class="{{ request()->routeIs('incidents.index') ? 'is-active' : '' }}">Mijn meldingen</a>
         @auth
         <a href="{{ route('incidents.create') }}" class="{{ request()->routeIs('incidents.create') ? 'is-active' : '' }}">Melding maken</a>
+        @if (auth()->user()->isBeheerder())
+        <a href="{{ route('beheer.index') }}" class="{{ request()->routeIs('beheer.*') ? 'is-active' : '' }}">Beheer</a>
+        @endif
         @endauth
     </nav>
 

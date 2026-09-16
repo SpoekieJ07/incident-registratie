@@ -44,7 +44,12 @@
             <div class="incident-grid">
                 <div class="form-field">
                     <label for="location">Locatie</label>
-                    <input id="location" name="location" type="text" value="{{ old('location') }}" required>
+                    <select id="location" name="location" required>
+                        <option value="">Kies een locatie</option>
+                        @foreach ($locations as $location)
+                        <option value="{{ $location->name }}" {{ old('location') === $location->name ? 'selected' : '' }}>{{ $location->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div class="form-field">
@@ -57,11 +62,9 @@
                 <label for="type">Type incident</label>
                 <select id="type" name="type" required>
                     <option value="">Kies een type</option>
-                    <option value="Infrastructuur" {{ old('type') === 'Infrastructuur' ? 'selected' : '' }}>Infrastructuur</option>
-                    <option value="Veiligheid" {{ old('type') === 'Veiligheid' ? 'selected' : '' }}>Veiligheid</option>
-                    <option value="IT" {{ old('type') === 'IT' ? 'selected' : '' }}>IT</option>
-                    <option value="Onderhoud" {{ old('type') === 'Onderhoud' ? 'selected' : '' }}>Onderhoud</option>
-                    <option value="Overig" {{ old('type') === 'Overig' ? 'selected' : '' }}>Overig</option>
+                    @foreach ($incidentTypes as $incidentType)
+                    <option value="{{ $incidentType->name }}" {{ old('type') === $incidentType->name ? 'selected' : '' }}>{{ $incidentType->name }}</option>
+                    @endforeach
                 </select>
             </div>
 

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\IncidentType;
+use App\Models\Location;
 use App\Models\User;
 use App\UserRole;
 
@@ -92,4 +94,52 @@ test('an authenticated user can view their own incidents and statuses', function
         ->assertSee('Netwerk uitval')
         ->assertSee('In behandeling')
         ->assertDontSee('Ander incident');
+});
+
+test('only a beheerder can manage catalogs and user roles', function () {
+    $beheerder = User::factory()->beheerder()->create();
+    $user = User::factory()->create();
+    $typeName = 'Veiligheid '.uniqid();
+    $locationName = 'Hoofdkantoor '.uniqid();
+
+    $this->actingAs($user)->get('/beheer')->assertForbidden();
+
+    $this->actingAs($beheerder)->post('/beheer/incidenttypes', ['name' => $typeName])->assertRedirect();
+    $this->actingAs($beheerder)->post('/beheer/locaties', ['name' => $locationName])->assertRedirect();
+
+    $incidentType = IncidentType::where('name', $typeName)->firstOrFail();
+    $location = Location::where('name', $locationName)->firstOrFail();
+    $this->assertDatabaseHas('incident_types', ['name' => $typeName]);
+    $this->assertDatabaseHas('locations', ['name' => $locationName]);
+
+    $this->actingAs($beheerder)->patch("/beheer/incidenttypes/{$incidentType->id}", ['name' => $typeName.' aangepast'])->assertRedirect();
+    $this->actingAs($beheerder)->patch("/beheer/locaties/{$location->id}", ['name' => $locationName.' aangepast'])->assertRedirect();
+    $this->assertDatabaseHas('incident_types', ['name' => $typeName.' aangepast']);
+    $this->assertDatabaseHas('locations', ['name' => $locationName.' aangepast']);
+
+    $this->actingAs($beheerder)->delete("/beheer/incidenttypes/{$incidentType->id}")->assertRedirect();
+    $this->actingAs($beheerder)->delete("/beheer/locaties/{$location->id}")->assertRedirect();
+    $this->assertDatabaseMissing('incident_types', ['id' => $incidentType->id]);
+    $this->assertDatabaseMissing('locations', ['id' => $location->id]);
+
+    $this->actingAs($beheerder)->patch("/beheer/gebruikers/{$user->id}/rol", [
+        'role' => UserRole::Coordinator->value,
+    ])->assertRedirect();
+
+    expect($user->refresh()->role)->toBe(UserRole::Coordinator);
+});
+
+test('a melder must provide all required incident fields', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->post('/incidents', [
+        'title' => '',
+        'description' => '',
+        'location' => '',
+        'occurred_at' => '',
+        'type' => '',
+    ]);
+
+    $response->assertSessionHasErrors(['title', 'description', 'location', 'occurred_at', 'type']);
+    $this->assertDatabaseMissing('incidents', ['user_id' => $user->id]);
 });
