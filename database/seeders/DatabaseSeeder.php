@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\IncidentType;
+use App\Models\Location;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,7 +17,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        foreach (['Infrastructuur', 'Veiligheid', 'IT', 'Onderhoud', 'Overig'] as $name) {
+            IncidentType::updateOrCreate(['name' => $name], ['active' => true]);
+        }
+
+        foreach (['Kantoor', 'Magazijn', 'Garage'] as $name) {
+            Location::updateOrCreate(['name' => $name], ['active' => true]);
+        }
 
         User::factory()->create([
             'name' => 'Test User',
